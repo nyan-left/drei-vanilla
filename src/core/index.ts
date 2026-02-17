@@ -3,6 +3,9 @@ export * from './pcss'
 export * from './Caustics'
 export * from './shaderMaterial'
 
+// Camera
+export * from './CubeCamera'
+
 // Staging/Prototyping
 export * from './AccumulativeShadows'
 export * from './Cloud'
