@@ -26,7 +26,11 @@ import { pcss, ... } from '@pmndrs/vanilla'
 <table>
   <tr>
     <td valign="top">
-      <ul>                
+      <ul>
+        <li><a href="#camera">Camera</a></li>
+        <ul>
+          <li><a href="#cubecamera">CubeCamera</a></li>
+        </ul>
         <li><a href="#shaders">Shaders</a></li>
         <ul>
           <li><a href="#pcss">pcss</a></li>
@@ -82,6 +86,63 @@ import { pcss, ... } from '@pmndrs/vanilla'
 
   </tr>
 </table>
+
+# Camera
+
+#### CubeCamera
+
+[![storybook](https://img.shields.io/badge/-storybook-%23ff69b4)](https://pmndrs.github.io/drei-vanilla/?path=/story/camera-cubecamera--cube-camera-story)
+
+[drei counterpart](https://drei.docs.pmnd.rs/camera/cube-camera)
+
+A helper that renders the scene into a cube render target and provides the resulting texture as an environment map. Children added to the group are automatically hidden during cube capture to avoid feedback loops.
+
+```ts
+export type CubeCameraProps = {
+  /** Resolution of the FBO, default: 256 */
+  resolution?: number
+  /** Camera near, default: 0.1 */
+  near?: number
+  /** Camera far, default: 1000 */
+  far?: number
+  /** How many frames it will render, set it to Infinity for runtime, default: Infinity */
+  frames?: number
+  /** Custom environment map that is temporarily set as the scene's background */
+  envMap?: THREE.Texture
+  /** Custom fog that is temporarily set as the scene's fog */
+  fog?: THREE.Fog | THREE.FogExp2
+}
+```
+
+Usage
+
+```js
+const cubeCamera = CubeCamera(renderer, scene, { resolution: 256, frames: 1 })
+scene.add(cubeCamera.group)
+
+// Add meshes that need the envMap (hidden during capture)
+const mesh = new THREE.Mesh(
+  geometry,
+  new THREE.MeshStandardMaterial({ roughness: 0, metalness: 1, envMap: cubeCamera.texture })
+)
+cubeCamera.group.add(mesh)
+
+// Call in animate loop
+cubeCamera.update()
+```
+
+CubeCamera function returns the following
+
+```js
+export type CubeCameraType = {
+  group: THREE.Group // group whose children are hidden during capture
+  camera: THREE.CubeCamera // the cube camera instance
+  fbo: THREE.WebGLCubeRenderTarget // the render target
+  texture: THREE.CubeTexture // the resulting cube texture, use as envMap
+  params: CubeCameraProps // mutable params
+  update: () => void // call in animate loop
+}
+```
 
 # Shaders
 
